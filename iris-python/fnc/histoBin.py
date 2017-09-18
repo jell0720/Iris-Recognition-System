@@ -1,34 +1,42 @@
 ##
-##	Author: Nguyen Chinh Thuy.
-##	Date  : 17/08/2017.
+##  Author          :   Nguyen Chinh Thuy.
+##  Date            :   17/08/2017.
+##  
+##  Interpreter     :   Python 3.5
+##  IDE             :   Pycharm Community 2017.2.1
+##
+##  Description     :   
+##
+##  Input           :   
+##  Output          :
 ##
 
 
-##
-## Import
-##
+##-----------------------------------------------------------------------------
+##  Import
+##-----------------------------------------------------------------------------
 from numpy import mean, uint8
 from scipy.signal import medfilt2d
 
 
+##-----------------------------------------------------------------------------
+##  Function : Binary the image bases on local histogram.
 ##
-## Function : Binary the image bases on local histogram.
+##  Input    : im    : Read image.
+##             err   : The minimum difference that can be ignored.
+##             flgInv: Inverse the binary result?
 ##
-## Input    : im    : Read image.
-##            err   : The minimum difference that can be ignored.
-##            flgInv: Inverse the binary result?
-##
-## Output   : imbin : Binarized image.
-##
+##  Output   : imbin : Binarized image.
+##-----------------------------------------------------------------------------
 def binarize (im, err, flgInv=False):
-    ##
-    ## Function : Calculate the threshold of an image.
-    ##
-    ## Input    : im    : Read image.
-    ##            err   : The minimum difference that can be ignored.
-    ##
-    ## Output   : thres : Threshold of the image.
-    ##
+    '''
+    Function : Calculate the threshold of an image.
+
+    Input    : im    : Read image.
+               err   : The minimum difference that can be ignored.
+
+    Output   : thres : Threshold of the image.
+    '''
     def threshold (im, err):
         # Initialize the threshold
         thres = mean(im)

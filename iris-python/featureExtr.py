@@ -16,8 +16,7 @@
 ##  Import
 ##-----------------------------------------------------------------------------
 import ws
-# import segment
-# import matplotlib.pyplot as plt
+import segment
 
 
 ##-----------------------------------------------------------------------------
@@ -26,24 +25,24 @@ import ws
 smp_db = 'sample_db/'
 
 
-"""
-Class iris
-
-Input:  cin		    : Inner core of the iris.
-		cout	    : Outer core of the iris.
-		rin		    : Inner radius of the iris.
-		rout	    : Outer radius of the iris.
-		polar	    : Polar form of the iris.
-		descartes   : Descartes form of the iris.
-"""
-# class iris():
-#     def __init__(self, cin, cout, rin, rout, polar, descartes):
-#         self.cin = cin
-#         self.cout = cout
-#         self.rin = rin
-#         self.rout = rout
-#         self.polar = polar
-#         self.descartes = descartes
+##-----------------------------------------------------------------------------
+##   Class iris
+##
+##   Input:  cin		: Inner core of the iris.
+## 		     cout	    : Outer core of the iris.
+## 		     rin		: Inner radius of the iris.
+## 		     rout	    : Outer radius of the iris.
+## 		     polar	    : Polar form of the iris.
+## 		     descartes  : Descartes form of the iris.
+##-----------------------------------------------------------------------------
+class iris():
+    def __init__(self, cin, cout, rin, rout, polar, descartes):
+        self.cin = cin
+        self.cout = cout
+        self.rin = rin
+        self.rout = rout
+        self.polar = polar
+        self.descartes = descartes
 
 
 ##-----------------------------------------------------------------------------
@@ -59,9 +58,9 @@ sampend   = 15
 for m in range(idstart, idend+1):
     for n in range(sampstart, sampend+1):
 
-# Create workspace
+# Create workspace: See [ws.py] for more information
         # Parameters
-        Ws_isPlot = True         # True 	False
+        Ws_isPlot = False            # True 	False
 
         # Make file name
         k=n
@@ -79,44 +78,35 @@ for m in range(idstart, idend+1):
             ws.vs(im, imsz, Ws_fname)
 
 
-# Segmentation
+# Segmentation: See [segment.py] for more information.
         # Parameters
-        # class Seg():
-        #     isPlot=False         # True     False
-        #     err=3
-        #     # Fast Hough transform
-        #     class fh():
-        #         wid=40
-        #         jDelta=80
-        #     # GAC
-        #     class gac():
-        #         k=2.8
-        #         alpha=8
-        #         band=0
-        #     # DCAC
-        #     class dcac():
-        #         thres=150
-        #         r=20
-        #         n=30
-        #         delta=2
-        #         deltac=0.1
-        #         lamda=0.5
-        #         psi=0.9
-        #         M=1500
-        #         N=250
-        #         eps=1
+        class Seg():
+            isPlot  = True         # True     False
+            wid     = 40
+            jDelta  = 80
+            err     = 3
+            thres   = 150
+            r       = 20
+            n       = 30
+            delta   = 2
+            deltac  = 0.1
+            lamda   = 0.5
+            psi     = 0.9
+            M       = 1500
+            N       = 250
+            eps     = 1
 
-        # # Implementation
-        # bound, coreraw      = segment.raw_pupil(im, Seg.err)
-        # cin, rin            = segment.refined_pupil(im, imsz, bound, coreraw, Seg.dcac)
-        # cout, rout, polar   = segment.iris(im,imsz, cin, rin, Seg.fh)
+        # Implementation
+        bound, coreraw      = segment.raw_pupil(im, Seg.err)
+        cin, rin            = segment.refined_pupil(im, imsz, bound, coreraw, Seg)
+        cout, rout, polar   = segment.iris(im,imsz, cin, rin, Seg)
         
-        # # Package
-        # Iris = iris(cin, cout, rin, rout, polar, None)
+        # Package
+        Iris = iris(cin, cout, rin, rout, polar, None)
 
-        # # Visualize
-        # if Seg.isPlot:
-        #     segment.vs(im, Ws_fname, cin, cout, rin, rout)
+        # Visualize
+        if Seg.isPlot:
+            segment.vs(im, Ws_fname, cin, cout, rin, rout)
 
 
 # # Normalization
