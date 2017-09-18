@@ -51,8 +51,8 @@ class iris():
 # ID and sample of images
 idstart   = 1
 idend     = 1
-sampstart = 1
-sampend   = 15
+sampstart = 4
+sampend   = 4
 
 # Loop
 for m in range(idstart, idend+1):

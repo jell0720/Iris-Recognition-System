@@ -7,7 +7,7 @@ Date  : 18/08/2017.
 """
 Import
 """
-from numpy import *
+import numpy as np
 from math import floor, pi
 from scipy.ndimage.filters import generic_filter
 
@@ -49,7 +49,7 @@ class dcac():
 # Output: cin   : Inner core (i-j).
 #         rin   : Inner radius.
 # """
-    def evolution (self, im, imsz):
+    def evolution(self, im, imsz):
         # Pre-filter
         imvar = self.varFilt(im,5)
         imthr = ~(imvar > self.thres)
@@ -62,9 +62,9 @@ class dcac():
         count = 0
         while delta>0:
             # Start DCAC
-            p = zeros([self.M, 2])
+            p = np.zeros([self.M, 2])
             p[1,:] = self.coreraw
-            r = zeros(self.M)
+            r = np.zeros(self.M)
             r[1] = self.r
             contour = self.init_dcac(self.coreraw)
 
@@ -72,8 +72,8 @@ class dcac():
             flgEq = False
             count = 2
             while count<=self.M and self.belongim(contour, imsz):
-                p_cur = p[count-1,:]
-                r_cur = r[count-1,:]
+                p_cur = p[count-1, :]
+                r_cur = r[count-1, :]
                 contour, p[count,:], r[count,:] = self.move_dcac(contour, p_cur, r_cur,
                                                     delta, param, im, imvar, imthr)
                 # Test equilibrium for each N iterations
@@ -105,12 +105,12 @@ class dcac():
 # """
     def varFilt (self, im, sz):
         # Mask
-        NHOOD = ones([sz, sz])
+        NHOOD = np.ones([sz, sz])
         r = floor((sz - 1) / 2)
         NHOOD[r+1,r+1] = 0
 
         # Filter
-        imvar = generic_filter(im, std, footprint=NHOOD)
+        imvar = generic_filter(im, np.std, footprint=NHOOD)
         return imvar
 
 # """
@@ -121,11 +121,11 @@ class dcac():
 # Output: contour   : Points of contour (i-j).
 # """
     def init_dcac (self, p):
-        contour = zeros([self.n, 2])
-        t = arange(0, self.n-1, 1) / self.n
-        contour[:,0] = p[0] - self.r * sin(2*pi*t)
-        contour[:,1] = p[1] + self.r * cos(2*pi*t)
-        contour = round(contour)
+        contour = np.zeros([self.n, 2])
+        t = np.arange(0, self.n, 1) / self.n
+        contour[:,0] = p[0] - self.r * np.sin(2*pi*t)
+        contour[:,1] = p[1] + self.r * np.cos(2*pi*t)
+        contour = np.round(contour)
         return contour
 
 # """
@@ -137,11 +137,11 @@ class dcac():
 # Output: isBelong  : Boolean result.
 # """
     def belongim (self, contour, imsz):
-        up = min(contour[:,0])
-        down = max(contour[:,0])
-        left = min(contour[:,1])
-        right = max(contour[:,1])
-        if up<3 or down>imsz(1)-2 or left<3 or right>imsz(2)-2:
+        up      = min(contour[:,0])
+        down    = max(contour[:,0])
+        left    = min(contour[:,1])
+        right   = max(contour[:,1])
+        if up<3 or down>imsz[0]-2 or left<3 or right>imsz[1]-2:
             isBelong = False
         else:
             isBelong = True
@@ -163,13 +163,13 @@ class dcac():
         i = p[:,0]
         j = p[:,1]
         # Last group
-        il = mean(i[end_idx-self.N+1 : end_idx+1])
-        jl = mean(j[end_idx-self.N+1 : end_idx+1])
-        rl = mean(r[end_idx-self.N+1 : end_idx+1])
+        il = np.mean(i[end_idx-self.N+1 : end_idx+1])
+        jl = np.mean(j[end_idx-self.N+1 : end_idx+1])
+        rl = np.mean(r[end_idx-self.N+1 : end_idx+1])
         # Previous group
-        ip = mean(i[end_idx-2*self.N+1 : end_idx-self.N+1])
-        jp = mean(j[end_idx-2*self.N+1 : end_idx-self.N+1])
-        rp = mean(r[end_idx-2*self.N+1 : end_idx-self.N+1])
+        ip = np.mean(i[end_idx-2*self.N+1 : end_idx-self.N+1])
+        jp = np.mean(j[end_idx-2*self.N+1 : end_idx-self.N+1])
+        rp = np.mean(r[end_idx-2*self.N+1 : end_idx-self.N+1])
 
         ## Make a decision
         if abs(il-ip)<=self.eps and abs(jl-jp)<=self.eps and abs(rl-rp)<=self.eps:
@@ -196,7 +196,7 @@ class dcac():
         ## Necessary functions
         def nearestVal(data, ref):
             dis = abs(data - ref)
-            ind = argmin(dis)
+            ind = np.argmin(dis)
             val = data[ind]
             return val
 
@@ -207,7 +207,7 @@ class dcac():
 
         def Iical(contour, im):
             len = contour.shape[0]
-            vect = zeros(len)
+            vect = np.zeros(len)
             for ind in range(len+1):
                 i = contour[ind,0]
                 j = contour[ind,1]
@@ -219,7 +219,7 @@ class dcac():
 
         def dical(contour, p):
             vect = p - contour
-            dis = sqrt(vect[:,0]**2 + vect[:,1]**2) + finfo(float).eps
+            dis = np.sqrt(vect[:,0]**2 + vect[:,1]**2) + np.finfo(float).eps
             vect = round(vect / dis)
             return vect
 
@@ -229,10 +229,10 @@ class dcac():
         psi = param[2]
 
         ## Internal force
-        t = 2*pi*arange(0,n-1)/n
-        apx = zeros(contour.shape)
-        apx[:,0] = p[0] - (r + delta)*sin(t)
-        apx[:,1] = p[1] + (r + delta)*cos(t)
+        t = 2 * pi * np.arange(0,n-1)/n
+        apx = np.zeros(contour.shape)
+        apx[:,0] = p[0] - (r + delta) * np.sin(t)
+        apx[:,1] = p[1] + (r + delta) * np.cos(t)
         F = apx - contour
 
         ## External force
@@ -244,5 +244,5 @@ class dcac():
         contour = round(contour + lamda*F + (1-lamda)*G)
         p = round(sum(contour,0) / n)
         dis = contour - p
-        r = round(sum(sqrt(dis[:,0]**2 + dis[:,1]**2)) / n)
+        r = round(sum(np.sqrt(dis[:,0]**2 + dis[:,1]**2)) / n)
         return contour, p, r
