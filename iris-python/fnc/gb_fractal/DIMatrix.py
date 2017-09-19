@@ -18,7 +18,7 @@ def DIMatrix(V_all, E_all, Y):
         for i in range(20):
             for j in range(20):
                 # Index of the second image
-                im_id2 =
+                im_id2 = ravel_multi_index((i,j),(20,20))
                 # Skip if the second index is same as the first index
                 if im_id2 == im_id1:
                     DI_all[i,j,im_id1] = 0
@@ -34,3 +34,5 @@ def DIMatrix(V_all, E_all, Y):
                 featureVec2 = V_all[im_id2,:]
                 ind = 400*(im_id1-1) + im_id2
                 DI_all[i,j,im_id1] = imDist(featureVec1,featureVec2,E_all[:,:,ind],Y)
+
+    return(DI_all)
