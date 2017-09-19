@@ -20,6 +20,7 @@ from cv2 import *
 import matplotlib.pyplot as plt
 from numpy import *
 from scipy.ndimage import measurements
+import time
 
 # Modules
 from fnc import histoBin, core, quality, radius, edge
@@ -37,23 +38,23 @@ from fnc.fastHough import fh
 ##             coreraw 	: Raw core of the pupil.
 ##-----------------------------------------------------------------------------
 def raw_pupil(im, err):
-	# Binarize the image and get the largest object
-	imbin = histoBin.binarize(im, err, 1)
-	labels, nbr_obj = measurements.label(imbin)
-	obj = zeros(nbr_obj, dtype=object)
-	area = zeros(nbr_obj)
-	for i in range(nbr_obj):
-		obj[i] = (labels==(i+1))
-		area[i] = sum(obj[i])
-	ind_maxarea = argmax(area)
-	obj = obj[ind_maxarea]
-	obj = 255*obj.astype(uint8)
+    # Binarize the image and get the largest object
+    imbin = histoBin.binarize(im, err, 1)
+    labels, nbr_obj = measurements.label(imbin)
+    obj = zeros(nbr_obj, dtype=object)
+    area = zeros(nbr_obj)
+    for i in range(nbr_obj):
+        obj[i] = (labels==(i+1))
+        area[i] = sum(obj[i])
+    ind_maxarea = argmax(area)
+    obj = obj[ind_maxarea]
+    obj = 255*obj.astype(uint8)
 
-	# Get the boundary of the largest object
-	_, bound, _ = findContours(obj, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
-	bound = bound[0]
-	coreraw = core.core_outbound(bound).astype(int)
-	return bound, coreraw
+    # Get the boundary of the largest object
+    _, bound, _ = findContours(obj, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
+    bound = bound[0]
+    coreraw = core.core_outbound(bound).astype(int)
+    return bound, coreraw
 
 
 ##-----------------------------------------------------------------------------
@@ -68,13 +69,13 @@ def raw_pupil(im, err):
 ## 		       rin		: Inner radius.
 ##-----------------------------------------------------------------------------
 def refined_pupil(im, imsz, bound, coreraw, Seg_dcac_param):
-	if not quality.test(bound, coreraw, 10, 5):
-		dcac_seg = dcac(coreraw, Seg_dcac_param)
-		cin, rin = dcac_seg.evolution(im, imsz)
-	else:
-		cin = coreraw
-		rin = radius.cal(bound, coreraw).astype(int)
-	return cin, rin
+    if not quality.test(bound, coreraw, 10, 5):
+        dcac_seg = dcac(coreraw, Seg_dcac_param)
+        cin, rin = dcac_seg.evolution(im, imsz)
+    else:
+        cin = coreraw
+        rin = radius.cal(bound, coreraw).astype(int)
+    return cin, rin
 
 
 ##-----------------------------------------------------------------------------
@@ -91,16 +92,16 @@ def refined_pupil(im, imsz, bound, coreraw, Seg_dcac_param):
 ## 		       polar				: Polar form of the iris.
 ##-----------------------------------------------------------------------------
 def iris(im, imsz, cin, rin, Seg_fastHough_param):
-	edg = edge.canny(im, sz=5, std=1.2)
-	# plt.figure(2)
-	# plt.imshow(edg, cmap='gray')
-	# plt.show()
-	fh_seg = fh(cin, 2*rin, Seg_fastHough_param)
-	l_msk, r_msk, up, down = fh_seg.outerMsk(imsz)
-	l_set, r_set = fh_seg.findOuterSets(edg, l_msk, r_msk, up, down)
-	cout, rout = fh_seg.findBound(l_set, r_set)
-	polar = fh_seg.getIrisPolar(im, imsz, cin, cout, rin, rout)
-	return cout, rout, polar
+    edg = edge.canny(im, sz=5, std=1.2)
+    # plt.figure(2)
+    # plt.imshow(edg, cmap='gray')
+    # plt.show()
+    fh_seg = fh(cin, 2*rin, Seg_fastHough_param)
+    l_msk, r_msk, up, down = fh_seg.outerMsk(imsz)
+    l_set, r_set = fh_seg.findOuterSets(edg, l_msk, r_msk, up, down)
+    cout, rout = fh_seg.findBound(l_set, r_set)
+    polar = fh_seg.getIrisPolar(im, imsz, cin, cout, rin, rout)
+    return cout, rout, polar
 
 
 ##-----------------------------------------------------------------------------
@@ -117,19 +118,21 @@ def iris(im, imsz, cin, rin, Seg_fastHough_param):
 ## 	Output   : None.
 ##-----------------------------------------------------------------------------
 def vs(im, fname, cin, cout, rin, rout):
-	# Plot the eye image
-	fg = plt.figure(2)
-	plt.title('[%s].Iris segmentation' % fname[0:8])
-	plt.imshow(im, cmap='gray', interpolation='bicubic')
-	plt.hold(True)
+    # Plot the eye image
+    fg = plt.figure(2)
+    plt.title('[%s].Iris segmentation' % fname[0:8])
+    plt.imshow(im, cmap='gray', interpolation='bicubic')
+    plt.hold(True)
 
-	# Plot inner core and outer core
-	plt.plot(cin[1], cin[0], 'rx')
-	plt.plot(cout[1], cout[0], 'yo')
+    # Plot inner core and outer core
+    plt.plot(cin[1], cin[0], 'rx')
+    plt.plot(cout[1], cout[0], 'bo')
 
-	# Plot inner circle and outer circle
-	cir_in = plt.Circle((cin[1],cin[0]), rin, color='g', fill=False)
-	cir_out = plt.Circle((cout[1],cout[0]), rout, color='b', fill=False)
-	fg.gca().add_artist(cir_in)
-	fg.gca().add_artist(cir_out)
-	plt.show()
+    # Plot inner circle and outer circle
+    cir_in = plt.Circle((cin[1],cin[0]), rin, color='r', fill=False)
+    cir_out = plt.Circle((cout[1],cout[0]), rout, color='b', fill=False)
+    fg.gca().add_artist(cir_in)
+    fg.gca().add_artist(cir_out)
+    plt.show(block=False)
+    plt.savefig('test_result/%s' % fname[0:8])
+    plt.close("all")

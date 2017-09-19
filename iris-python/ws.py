@@ -16,7 +16,6 @@
 ## Import
 ##-----------------------------------------------------------------------------
 import cv2
-import numpy
 from matplotlib.pyplot import *
 
 
@@ -31,7 +30,7 @@ from matplotlib.pyplot import *
 ##-----------------------------------------------------------------------------
 def readim(fname, dbpath):
 	im = cv2.imread(dbpath + fname, 0)
-	imsz = [im.shape[0], im.shape[1]]
+	imsz = im.shape
 	return im, imsz
 
 

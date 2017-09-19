@@ -1,6 +1,14 @@
 ##
-##	Author: Nguyen Chinh Thuy.
-##	Date  : 18/08/2017.
+##  Author          :   Nguyen Chinh Thuy.
+##  Date            :   18/08/2017.
+##
+##  Interpreter     :   Python 3.5
+##  IDE             :   Pycharm Community 2017.2.1
+##
+##  Description     :
+##
+##  Input           :
+##  Output          :
 ##
 
 
@@ -21,12 +29,12 @@ from math import floor
 ##
 ##   Output : isOK  : Boolean result.
 ##
-def test (bound, p, N, err):
+def test(bound, p, N, err):
     # Divide the boundary into small parts
     len = bound.shape[0]
     elnum = floor(len/N)
-    arr = arange(1, elnum * N + 1)
-    part_idx = reshape(arr,[elnum,N])
+    arr = arange(0, elnum * N, 1)
+    part_idx = reshape(arr, [elnum,N])
 
     # Calculate r for each part and the average for all parts
     i_idx = bound[:,0,1]
