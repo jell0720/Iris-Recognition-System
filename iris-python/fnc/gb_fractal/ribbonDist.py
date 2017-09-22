@@ -15,7 +15,7 @@ def ribbonDist(featureVec1, featureVec2, E):
     # Prepare
     U1 = reshape(featureVec1,(96,20))
     U2 = reshape(featureVec2,(96,20))
-    e = numpy.matlib.repmat(E,24,1)
+    e = numpy.matlib.repmat(E,24,1) # size [96,20]
     num_e = sum(e,axis = 1)
     num_e = num_e[newaxis,:].T
 

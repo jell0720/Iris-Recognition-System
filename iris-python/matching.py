@@ -1,37 +1,27 @@
 """
 Do Tieu Thien
-18/9/2017
+22/9/2107
+Matching of Iris
 """
 
-
-
-"""
-Import
-"""
-from cv2 import *
-from numpy import *
-from IRIS import IRIS
+# Import
+from numpy import*
+from scipy.io import loadmat
+import sys
+sys.path.append('C:/Users/Admin/Documents/Github/Iris-Python/Iris-Recognition-System/iris-python/fnc/gb_fractal')
+sys.path.append('C:/Users/Admin/Documents/Github/Iris-Python/Iris-Recognition-System/iris-python/fnc/FAR-FRR')
 from DIMatrix import DIMatrix
 
+# Load
+loadmat('data.mat')
+loadmat('training.mat')
 
-
-"""
-Load
-"""
-
-
-
-"""
-Creat muntual effective matrix
-"""
-E = zeros((4,20,400))
-V = zeros((400,1920))
-IRIS = IRIS(E,V)
+# Creat muntual effective matrix
 E = zeros((4,20,160000))
 for i in range(400):
     for j in range(400):
         # Index
-        ind = 400*(i-1)+j
+        ind = 400*i+j
         # Same
         if i == j:
             E[:,:,ind] = IRIS.E[:,:,i]
@@ -45,18 +35,15 @@ for i in range(400):
         else:
             E[:,:,ind] = IRIS.E[:,:,i]* IRIS.E[:,:,j]
 
-"""
-Label matrix
-"""
+# Label matrix
 label_map = zeros((20,20,400))
 for im_id in range(400):
     [i, j] = unravel_index(im_id,[20,20])
-    if i < 11:
-        label_map[i,1:10,im_id] = ones((1,10))
+    if i < 10:
+        label_map[i,0:10,im_id] = ones((1,10))
     else:
-        label_map[i,11:20,im_id] = ones((1, 10))
+        label_map[i,10:20,im_id] = ones((1, 10))
 
-"""
-Calculate distance
-"""
-DI_all
+# Calculate distance
+DI_all = DIMatrix[IRIS.V,E,training.map]
+
