@@ -8,10 +8,10 @@ Matching of Iris
 from numpy import*
 from scipy.io import loadmat
 import sys
-sys.path.append('C:/Users/Admin/Documents/Github/Iris-Python/Iris-Recognition-System/iris-python/fnc/gb_fractal')
-sys.path.append('C:/Users/Admin/Documents/Github/Iris-Python/Iris-Recognition-System/iris-python/fnc/FAR-FRR')
+sys.path.append('C:/Users/Admin/Documents/Github/Iris-Python/Iris-Recognition-System/iris-python/gb-fractal')
+sys.path.append('C:/Users/Admin/Documents/Github/Iris-Python/Iris-Recognition-System/iris-python/FAR-FRR')
+from FAR_FRR_ratio
 from DIMatrix import DIMatrix
-
 # Load
 Data_file = loadmat('data.mat',squeeze_me=True,struct_as_record=False)
 Training_file = loadmat('training.mat',squeeze_me=True,struct_as_record=False)
@@ -47,7 +47,5 @@ for im_id in range(400):
         label_map[i,10:20,im_id] = ones((1, 10))
 
 # Calculate distance
-print(shape(IRIS.V))
-print(shape(E))
-print(shape(training.map))
-DI_all = DIMatrix[IRIS.V,E,training.map]
+DI_all = DIMatrix(IRIS.V,E,training.map)
+print(DI_all)
