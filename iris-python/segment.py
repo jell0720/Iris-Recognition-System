@@ -20,7 +20,6 @@ from cv2 import *
 import matplotlib.pyplot as plt
 from numpy import *
 from scipy.ndimage import measurements
-import time
 
 # Modules
 from fnc import histoBin, core, quality, radius, edge
@@ -54,6 +53,8 @@ def raw_pupil(im, err):
     _, bound, _ = findContours(obj, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
     bound = bound[0]
     coreraw = core.core_outbound(bound).astype(int)
+
+    # Return
     return bound, coreraw
 
 
@@ -69,12 +70,12 @@ def raw_pupil(im, err):
 ## 		       rin		: Inner radius.
 ##-----------------------------------------------------------------------------
 def refined_pupil(im, imsz, bound, coreraw, Seg_dcac_param):
-    if not quality.test(bound, coreraw, 10, 5):
+    if not quality.test(bound, coreraw, 10, 10):
         dcac_seg = dcac(coreraw, Seg_dcac_param)
         cin, rin = dcac_seg.evolution(im, imsz)
     else:
         cin = coreraw
-        rin = radius.cal(bound, coreraw).astype(int)
+        rin = int(radius.cal(bound, coreraw))
     return cin, rin
 
 
@@ -93,9 +94,6 @@ def refined_pupil(im, imsz, bound, coreraw, Seg_dcac_param):
 ##-----------------------------------------------------------------------------
 def iris(im, imsz, cin, rin, Seg_fastHough_param):
     edg = edge.canny(im, sz=5, std=1.2)
-    # plt.figure(2)
-    # plt.imshow(edg, cmap='gray')
-    # plt.show()
     fh_seg = fh(cin, 2*rin, Seg_fastHough_param)
     l_msk, r_msk, up, down = fh_seg.outerMsk(imsz)
     l_set, r_set = fh_seg.findOuterSets(edg, l_msk, r_msk, up, down)
@@ -133,6 +131,6 @@ def vs(im, fname, cin, cout, rin, rout):
     cir_out = plt.Circle((cout[1],cout[0]), rout, color='b', fill=False)
     fg.gca().add_artist(cir_in)
     fg.gca().add_artist(cir_out)
-    plt.show(block=False)
-    plt.savefig('test_result/%s' % fname[0:8])
+    # plt.show(block=False)
+    plt.savefig('test_result/segmentation/%s.jpg' % fname[0:8])
     plt.close("all")

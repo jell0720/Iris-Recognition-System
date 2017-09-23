@@ -50,7 +50,7 @@ class iris():
 ##  Loop
 ##-----------------------------------------------------------------------------
 # ID and sample of images
-idstart   = 11
+idstart   = 1
 idend     = 20
 sampstart = 1
 sampend   = 20
@@ -100,7 +100,7 @@ for m in range(idstart, idend+1):
         # Implementation
         bound, coreraw      = segment.raw_pupil(im, Seg.err)
         cin, rin            = segment.refined_pupil(im, imsz, bound, coreraw, Seg)
-        cout, rout, polar   = segment.iris(im,imsz, cin, rin, Seg)
+        cout, rout, polar   = segment.iris(im, imsz, cin, rin, Seg)
         
         # Package
         Iris = iris(cin, cout, rin, rout, polar, None)
