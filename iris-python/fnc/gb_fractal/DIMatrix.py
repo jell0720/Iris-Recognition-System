@@ -32,7 +32,7 @@ def DIMatrix(V_all, E_all, Y):
 
                 # Calculate distance bw two image
                 featureVec2 = V_all[im_id2,:]
-                ind = 400*(im_id1-1) + im_id2
+                ind = 400*(im_id1) + im_id2
                 DI_all[i,j,im_id1] = imDist(featureVec1,featureVec2,E_all[:,:,ind],Y)
 
     return(DI_all)

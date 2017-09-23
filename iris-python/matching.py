@@ -13,8 +13,10 @@ sys.path.append('C:/Users/Admin/Documents/Github/Iris-Python/Iris-Recognition-Sy
 from DIMatrix import DIMatrix
 
 # Load
-loadmat('data.mat')
-loadmat('training.mat')
+Data_file = loadmat('data.mat',squeeze_me=True,struct_as_record=False)
+Training_file = loadmat('training.mat',squeeze_me=True,struct_as_record=False)
+IRIS = Data_file['IRIS']
+training = Training_file['training']
 
 # Creat muntual effective matrix
 E = zeros((4,20,160000))
@@ -45,5 +47,7 @@ for im_id in range(400):
         label_map[i,10:20,im_id] = ones((1, 10))
 
 # Calculate distance
+print(shape(IRIS.V))
+print(shape(E))
+print(shape(training.map))
 DI_all = DIMatrix[IRIS.V,E,training.map]
-
