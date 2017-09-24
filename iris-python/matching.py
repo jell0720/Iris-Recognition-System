@@ -10,7 +10,7 @@ from scipy.io import loadmat
 import sys
 sys.path.append('C:/Users/Admin/Documents/Github/Iris-Python/Iris-Recognition-System/iris-python/gb-fractal')
 sys.path.append('C:/Users/Admin/Documents/Github/Iris-Python/Iris-Recognition-System/iris-python/FAR-FRR')
-from FAR_FRR_ratio
+from FAR_FRR_ratio import FAR_FRR_ratio
 from DIMatrix import DIMatrix
 # Load
 Data_file = loadmat('data.mat',squeeze_me=True,struct_as_record=False)
@@ -48,4 +48,9 @@ for im_id in range(400):
 
 # Calculate distance
 DI_all = DIMatrix(IRIS.V,E,training.map)
-print(DI_all)
+
+# Compute FAR and FRR ratio
+[FAR_rate,FRR_rate,thres] = FAR_FRR_ratio(DI_all, 5, label_map)
+print('FAR_rate = {}'.format(FAR_rate))
+print('FRR_rate = {}'.format(FRR_rate))
+print('Threshold = {}'.format(thres))
