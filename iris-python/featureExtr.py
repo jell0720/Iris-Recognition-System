@@ -6,9 +6,6 @@
 ##  IDE             :   Pycharm Community 2017.2.1
 ##
 ##  Description     :   Extract feature vectors from iris images.
-##
-##  Input           :   xxxxxxxxxx.
-##  Output          :   xxxxxxxxxx.
 ##-----------------------------------------------------------------------------
 
 
@@ -17,7 +14,7 @@
 ##  Import
 ##-----------------------------------------------------------------------------
 import ws
-import segment
+import segment, normalize
 
 
 ##-----------------------------------------------------------------------------
@@ -81,8 +78,8 @@ for m in range(idstart, idend+1):
 
 # Segmentation: See [segment.py] for more information.
         # Parameters
-        class Seg():
-            isPlot  = True         # True     False
+        class Seg:
+            isPlot  = False         # True     False
             wid     = 40
             jDelta  = 80
             err     = 3
@@ -97,7 +94,7 @@ for m in range(idstart, idend+1):
             N       = 250
             eps     = 1
 
-        # Implementation
+        # Implement
         bound, coreraw      = segment.raw_pupil(im, Seg.err)
         cin, rin            = segment.refined_pupil(im, imsz, bound, coreraw, Seg)
         cout, rout, polar   = segment.iris(im, imsz, cin, rin, Seg)
@@ -110,12 +107,23 @@ for m in range(idstart, idend+1):
             segment.vs(im, Ws_fname, cin, cout, rin, rout)
 
 
-# # Normalization
-#         Norm.isPlot=false       # True False
-#         Norm.M = 64
-#         Norm.N = 512
-#         normalization
-#
+# Normalization: See [normalize.py] for more information.
+        # Parameters
+        class Norm:
+            isPlot      = True         # True False
+            M           = 64
+            N           = 512
+            ang_start   = 191
+            ang_end     = 350
+            thres       = 0.3
+
+        # Implement
+        descart = normalize.descart_raw(Norm, Iris, imsz)
+
+        # Visualize
+        if Norm.isPlot:
+            normalize.vs(descart, Ws_fname)
+
 # # Enhancement
 #         Enh.isPlot=false       # True False
 #         enhancement

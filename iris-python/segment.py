@@ -1,4 +1,4 @@
-##
+##-----------------------------------------------------------------------------
 ##  Author          :   Nguyen Chinh Thuy.
 ##  Date            :   18/09/2017.
 ##  
@@ -7,10 +7,7 @@
 ##
 ##  Description     :   Determine the location of iris from the eye image.
 ##						Hybrid method (Histogram binary + Discrete Active Contour).
-##
-##  Input           :   
-##  Output          :
-##
+##-----------------------------------------------------------------------------
 
 
 ##-----------------------------------------------------------------------------
@@ -131,6 +128,7 @@ def vs(im, fname, cin, cout, rin, rout):
     cir_out = plt.Circle((cout[1],cout[0]), rout, color='b', fill=False)
     fg.gca().add_artist(cir_in)
     fg.gca().add_artist(cir_out)
-    # plt.show(block=False)
-    plt.savefig('test_result/segmentation/%s.jpg' % fname[0:8])
-    plt.close("all")
+    plt.show(block=True)
+    # plt.savefig('test_result/segmentation/%s.jpg' % fname[0:8])
+    # plt.close("all")
+
